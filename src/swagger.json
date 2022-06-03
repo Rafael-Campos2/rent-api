@@ -5,7 +5,7 @@
     "description": "This is an API Rent",
     "version": "1.0.0",
     "contact": {
-      "email": "rafaelscampos15@gmail.com"
+      "email": "rafaelscampos15@gmail.com"  
     }
   },
   "paths": {
