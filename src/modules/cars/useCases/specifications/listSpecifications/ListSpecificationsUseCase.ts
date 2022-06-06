@@ -9,7 +9,7 @@ export class ListSpecificationsUseCase {
     private specificationsRepository: ISpecificationsRepository,
   ) {}
 
-  execute() {
+  async execute() {
     return this.specificationsRepository.list();
   }
 }
