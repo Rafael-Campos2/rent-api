@@ -13,11 +13,11 @@ export class ImportCategoriesUseCase {
   execute({ file }: IRequest) {
     if (!file) throw new Error("File not found");
 
-    const stream = fs.createReadStream(file.path);
+    const fileStream = fs.createReadStream(file.path);
 
     const parseFile = csvParse();
 
-    stream.pipe(parseFile);
+    fileStream.pipe(parseFile);
 
     parseFile.on("data", async line => {
       console.log(line);

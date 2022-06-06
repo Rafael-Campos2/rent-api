@@ -6,10 +6,14 @@ export class ImportCategoriesController {
   constructor(private importCategoriesUseCase: ImportCategoriesUseCase) {}
 
   handle(req: Request, res: Response) {
-    const { file } = req;
+    try {
+      const { file } = req;
 
-    this.importCategoriesUseCase.execute({ file });
+      this.importCategoriesUseCase.execute({ file });
 
-    res.status(200).send();
+      res.status(200).send();
+    } catch (e) {
+      res.status(400).json({ error: (e as Error).message });
+    }
   }
 }

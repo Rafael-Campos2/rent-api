@@ -3,7 +3,7 @@ import { ICategoriesRepository } from "../../../repositories/ICategoriesReposito
 export class ListCategoriesUseCase {
   constructor(private categoriesRepository: ICategoriesRepository) {}
 
-  execute() {
+  async execute() {
     return this.categoriesRepository.list();
   }
 }
