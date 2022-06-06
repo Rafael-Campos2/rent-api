@@ -1,15 +1,16 @@
 import { Request, Response } from "express";
+import { container } from "tsyringe";
 
 import { CreateCategoryUseCase } from "./CreateCategoryUseCase";
 
 export class CreateCategoryController {
-  constructor(private createCategoryUseCase: CreateCategoryUseCase) {}
-
   async handle(req: Request, res: Response) {
     try {
       const { name, description } = req.body;
 
-      const category = await this.createCategoryUseCase.execute({
+      const createCategoryUseCase = container.resolve(CreateCategoryUseCase);
+
+      const category = await createCategoryUseCase.execute({
         name,
         description,
       });

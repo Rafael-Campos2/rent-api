@@ -1,27 +1,53 @@
 import csvParse from "csv-parser";
 import fs from "fs";
+import { Writable } from "stream";
+import { inject, injectable } from "tsyringe";
 
+import { pipelineAsync } from "../../../../../util/pipelineAsync";
 import { ICategoriesRepository } from "../../../repositories/ICategoriesRepository";
 
 interface IRequest {
   file: Express.Multer.File | undefined;
 }
 
+@injectable()
 export class ImportCategoriesUseCase {
-  constructor(private categoriesRepository: ICategoriesRepository) {}
+  constructor(
+    @inject("CategoriesRepository")
+    private categoriesRepository: ICategoriesRepository,
+  ) {}
 
-  execute({ file }: IRequest) {
+  async execute({ file }: IRequest) {
     if (!file) throw new Error("File not found");
 
     const fileStream = fs.createReadStream(file.path);
 
     const parseFile = csvParse();
 
-    fileStream.pipe(parseFile);
+    const insertToDatabase = new Writable({
+      objectMode: true,
+      write: async (chunk, encoding, callback) => {
+        try {
+          const { name, description } = chunk;
 
-    parseFile.on("data", async line => {
-      console.log(line);
-      // Fazer operação no banco de maneira esclalavel
+          if (!name || !description) throw new Error("Invalid file");
+
+          const categoryAlreadyExists =
+            await this.categoriesRepository.findByName(name);
+
+          if (!categoryAlreadyExists) {
+            await this.categoriesRepository.create({ name, description });
+          }
+
+          callback();
+        } catch (error) {
+          callback(error as Error);
+        }
+      },
     });
+
+    await pipelineAsync(fileStream, parseFile, insertToDatabase);
+
+    await fs.promises.unlink(file.path);
   }
 }
