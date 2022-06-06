@@ -14,7 +14,7 @@ export class ImportCategoriesController {
 
       await importCategoriesUseCase.execute({ file });
 
-      res.status(200).send();
+      res.status(201).send();
     } catch (e) {
       res.status(400).json({ error: (e as Error).message });
     }
