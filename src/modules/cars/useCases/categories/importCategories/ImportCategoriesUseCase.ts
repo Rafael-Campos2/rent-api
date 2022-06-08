@@ -3,6 +3,7 @@ import fs from "fs";
 import { Writable } from "stream";
 import { inject, injectable } from "tsyringe";
 
+import { AppError } from "../../../../../errors/AppError";
 import { pipelineAsync } from "../../../../../util/pipelineAsync";
 import { ICategoriesRepository } from "../../../repositories/ICategoriesRepository";
 
@@ -18,7 +19,7 @@ export class ImportCategoriesUseCase {
   ) {}
 
   async execute({ file }: IRequest) {
-    if (!file) throw new Error("File not found");
+    if (!file) throw new AppError("File not found");
 
     const fileStream = fs.createReadStream(file.path);
 
@@ -30,7 +31,7 @@ export class ImportCategoriesUseCase {
         try {
           const { name, description } = chunk;
 
-          if (!name || !description) throw new Error("Invalid file");
+          if (!name || !description) throw new AppError("Invalid file");
 
           const categoryAlreadyExists =
             await this.categoriesRepository.findByName(name);
