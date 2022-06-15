@@ -4,7 +4,8 @@ import { Writable } from "stream";
 import { inject, injectable } from "tsyringe";
 
 import { AppError } from "../../../../../errors/AppError";
-import { pipelineAsync } from "../../../../../util/pipelineAsync";
+import { deleteFile } from "../../../../../utils/file";
+import { pipelineAsync } from "../../../../../utils/pipelineAsync";
 import { ICategoriesRepository } from "../../../repositories/ICategoriesRepository";
 
 interface IRequest {
@@ -49,6 +50,6 @@ export class ImportCategoriesUseCase {
 
     await pipelineAsync(fileStream, parseFile, insertToDatabase);
 
-    await fs.promises.unlink(file.path);
+    await deleteFile(file.path);
   }
 }

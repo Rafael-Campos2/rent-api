@@ -4,7 +4,7 @@ import { v4 as uuidV4 } from "uuid";
 @Entity("users")
 export class User {
   @PrimaryColumn()
-  id?: string;
+  id: string;
 
   @Column()
   name: string;
@@ -23,6 +23,9 @@ export class User {
 
   @CreateDateColumn()
   created_at: Date;
+
+  @Column()
+  avatar_url: string;
 
   constructor() {
     if (!this.id) {

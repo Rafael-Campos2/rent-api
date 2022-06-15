@@ -28,6 +28,12 @@ export const ensureAuthenticated = async (
       throw new AppError("User does not exist", 401);
     }
 
+    const { id } = user;
+
+    req.user = {
+      id,
+    };
+
     return next();
   } catch {
     throw new AppError("Invalid or missing authorization token", 401);
